@@ -40,6 +40,7 @@ private:
 	bool m_isGameOverFlag = false;
 	bool m_isClearFlag = false;
 
+	int skyDomeH;
 	int modelH ;
 	
 	int sphMapH ;

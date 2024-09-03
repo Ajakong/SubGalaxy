@@ -30,7 +30,8 @@ GameManager::GameManager() :
 	// ぼかし用RT
 	blurRT(MakeScreen(640, 480, true)),
 	shrinkRT(MakeScreen(320, 240, true)),
-	depthRT(MakeScreen(640, 480))
+	depthRT(MakeScreen(640, 480)),
+	skyDomeH(MV1LoadModel("Model/Skydome/universe_skydome.mv1"))
 {
 	assert(modelH != -1);
 	assert(roughH != -1);
@@ -104,9 +105,9 @@ void GameManager::Init()
 
 void GameManager::Update()
 {
-	FillGraph(depthRT, 0, 0, 0, 0);
+	/*FillGraph(depthRT, 0, 0, 0, 0);
 	FillGraph(shrinkRT, 0, 0, 0, 0);
-	FillGraph(normRT, 0, 0, 0, 0);
+	FillGraph(normRT, 0, 0, 0, 0);*/
 
 	for (int x = -50; x <= 50; x += 10)
 	{
@@ -116,24 +117,24 @@ void GameManager::Update()
 	{
 		DrawLine3D(VGet(-50, 0, static_cast<float>(z)), VGet(50, 0, static_cast<float>(z)), 0xff0000);
 	}
-	// 使用するシェーダをセットしておく
-	SetUseVertexShader(vsH);
-	SetUsePixelShader(psH);
+	//// 使用するシェーダをセットしておく
+	//SetUseVertexShader(vsH);
+	//SetUsePixelShader(psH);
 
-	UpdateShaderConstantBuffer(cbuffH);
-	SetShaderConstantBuffer(cbuffH, DX_SHADERTYPE_PIXEL, 4);
+	//UpdateShaderConstantBuffer(cbuffH);
+	//SetShaderConstantBuffer(cbuffH, DX_SHADERTYPE_PIXEL, 4);
 
-	// シェーダーやってる部分
-	SetUseTextureToShader(3, dissolveH);
-	SetUseTextureToShader(4, sphMapH);
-	SetUseTextureToShader(5, roughH);
-	SetUseTextureToShader(6, metalH);
-	SetUseTextureToShader(7, toonH);
-	//		SetRenderTargetToShader(0, RT);	// 0番にRTを設定
-	SetRenderTargetToShader(1, depthRT);
-	SetRenderTargetToShader(2, normRT);
+	//// シェーダーやってる部分
+	//SetUseTextureToShader(3, dissolveH);
+	//SetUseTextureToShader(4, sphMapH);
+	//SetUseTextureToShader(5, roughH);
+	//SetUseTextureToShader(6, metalH);
+	//SetUseTextureToShader(7, toonH);
+	////		SetRenderTargetToShader(0, RT);	// 0番にRTを設定
+	//SetRenderTargetToShader(1, depthRT);
+	//SetRenderTargetToShader(2, normRT);
 
-	MV1SetUseOrigShader(true);
+	//MV1SetUseOrigShader(true);
 
 	/* カメラの設定
 	 RTを設定するとカメラの初期化が入ってるかもなので、RTの設定後にカメラの設定を行う*/
@@ -191,9 +192,9 @@ void GameManager::Update()
 	{
 		MV1SetMeshBackCulling(modelH, i, DX_CULLING_RIGHT);
 	}
-	SetUseVertexShader(outlineVsH);
-	SetUsePixelShader(outlinePsH);
-	MV1DrawModel(modelH);
+	/*SetUseVertexShader(outlineVsH);
+	SetUsePixelShader(outlinePsH);*/
+	//MV1DrawModel(modelH);
 	// カリング方向を元に戻す
 	for (int i = 0; i < MV1GetMeshNum(modelH); ++i)
 	{
@@ -251,6 +252,10 @@ void GameManager::Update()
 
 void GameManager::Draw()
 {
+	MV1SetScale(skyDomeH, VECTOR(5, 5, 5));
+	MV1SetPosition(skyDomeH,player->GetPos().VGet());
+
+	MV1DrawModel(skyDomeH);
 	planet->Draw();
 	player->Draw();
 	for (auto& item : takobo)item->Draw();
