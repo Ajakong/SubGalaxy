@@ -38,7 +38,7 @@ public:
 
 	virtual void Hit();
 
-	virtual bool IsDelete() { return m_isDeleteFlag; }
+	virtual bool IsDelete() { return false; }
 
 	//メンバ関数ポインタ
 	using MoveState_t = void(EnemySphere::*)();

@@ -140,6 +140,14 @@ void Player::SetCameraAngle(float cameraAngle)
 	m_cameraAngle = cameraAngle;
 }
 
+void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
+{
+	if (colider->GetTag() == ObjectTag::EnemyAttack)
+	{
+		m_Hp -= 20;
+	}
+}
+
 Vec3 Player::GetCameraToPlayer() const
 {
 	return m_cameraToPlayer;
@@ -223,8 +231,8 @@ void Player::NeutralUpdate()
 	float rate = len / kAnalogInputMax;
 	Vec3 front=GetCameraFrontVector();
 	Vec3 right = GetCameraRightVector();
-	move=front* analogY;//入力が大きいほど利教が大きい,0の時は0
-	move+=right* analogX;
+	move=m_frontVec* analogY;//入力が大きいほど利教が大きい,0の時は0
+	move+=m_sideVec* analogX;
 	
 
 	//アナログスティック無効な範囲を除外する

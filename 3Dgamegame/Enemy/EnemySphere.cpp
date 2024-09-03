@@ -18,7 +18,7 @@ m_enemy(std::dynamic_pointer_cast<Enemy>(enemy)),
 m_radius(kSphereRadius),
 m_velocity(velocity)
 {
-	m_rigid.SetPos(Vec3(0, 0, 0));
+	m_rigid.SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = m_radius;
@@ -51,7 +51,7 @@ void EnemySphere::Draw()
 
 void EnemySphere::Hit()
 {
-	m_isDeleteFlag = true;
+	//m_isDeleteFlag = true;
 
 }
 
@@ -62,8 +62,4 @@ void EnemySphere::StraightUpdate()
 
 void EnemySphere::DeleteJudge()
 {
-	if (CheckCameraViewClip(m_rigid.GetPos().VGet()) != 0)
-	{
-		m_isDeleteFlag = true;
-	}
 }

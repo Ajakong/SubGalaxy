@@ -162,14 +162,25 @@ void GameManager::Update()
 			i--;
 		}
 	}
+	
 	Vec3 planetToPlayer = player->GetPos() - planet->PlanetOnlyGetRigid().GetPos();
-	Vec3 playerToCamera = camera->GetPos() -player->GetPos();
+	Vec3 sideVec = GetCameraRightVector();
+	Vec3 front = Cross(planetToPlayer, sideVec).GetNormalized()*-1;
+	player->SetSideVec(sideVec);
+	player->SetFrontVec(front);
+
+	/*Vec3 playerToCamera = camera->GetPos() -player->GetPos();
 	float a = acos(Dot(planetToPlayer.GetNormalized(), playerToCamera.GetNormalized())) * 180 / DX_PI_F;
-	if ( a+32> 90)
+	
+	if ( a> 68)*/
 	{
-		camera->SetCameraPoint(player->GetPos() + (Vec3(GetCameraUpVector()).GetNormalized() * 100 - Vec3(GetCameraFrontVector()).GetNormalized() * 300));
+		//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
+		//camera->SetCameraPoint(player->GetPos() + (Vec3(GetCameraUpVector()).GetNormalized() * 100 - Vec3(GetCameraFrontVector())* 300));
+		camera->SetUpVec(planet->GetNormVec(player->GetPos()));
+		camera->SetCameraPoint(player->GetPos() + (Vec3(GetCameraUpVector()).GetNormalized() * 100 - front * 300));
 	}
-	camera->SetUpVec(planet->GetNormVec(player->GetPos()));
+	
+	
 	camera->Update(player->GetPos());
 	//camera->SetCameraPos(player->GetPos());
 
