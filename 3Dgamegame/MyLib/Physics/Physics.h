@@ -24,11 +24,11 @@ namespace MyEngine
 		};
 		struct OnCollideInfoData
 		{
-			Collidable* own;
-			Collidable* send;
+			std::shared_ptr<Collidable> own;
+			std::shared_ptr<Collidable> send;
 			OnCollideInfoKind kind;
 		};
-		using SendCollideInfo = std::unordered_map<Collidable*, std::list<Collidable*>>;
+		using SendCollideInfo = std::unordered_map<std::shared_ptr<Collidable>, std::list<std::shared_ptr<Collidable>>>;
 	private:
 		Physics();
 
@@ -42,17 +42,19 @@ namespace MyEngine
 
 		void Update();
 
+		void Clear();
+
 	private:
 		void MoveNextPos() const;
 
 		void CheckCollide();
 
-		bool IsCollide(const Rigidbody& rigidA, const Rigidbody& rigidB, const std::shared_ptr<ColliderBase>& colliderA, const std::shared_ptr<ColliderBase>& colliderB) const;
-		void FixNextPos(const Rigidbody& primaryRigid, Rigidbody& secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider);
-		void AddNewCollideInfo(Collidable* objA, Collidable* objB, SendCollideInfo& info);
+		bool IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<ColliderBase>& colliderA, const std::shared_ptr<ColliderBase>& colliderB) const;
+		void FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider);
+		void AddNewCollideInfo(std::shared_ptr<Collidable> objA, std::shared_ptr<Collidable> objB, SendCollideInfo& info);
 		void CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo, bool isTrigger);
-		void AddOnCollideInfo(Collidable* own, Collidable* send, OnCollideInfoKind kind);
-		void OnCollideInfo(Collidable* own, Collidable* send, OnCollideInfoKind kind);
+		void AddOnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, OnCollideInfoKind kind);
+		void OnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, OnCollideInfoKind kind);
 		void FixPos() const;
 
 	private:

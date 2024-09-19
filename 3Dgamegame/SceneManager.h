@@ -41,5 +41,11 @@ public:
 	/// </summary>
 	void PopScene();
 
+	/// <summary>
+	/// このシーンに移動したいんだって時に全部クリアした後にプッシュして移動します
+	/// </summary>
+	/// <param name="scene"></param>
+	void ResetScene(std::shared_ptr<Scene> scene);
+
 	std::shared_ptr<Scene> LookBack();
 };

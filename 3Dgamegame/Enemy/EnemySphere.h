@@ -38,20 +38,26 @@ public:
 
 	virtual void Hit();
 
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
 	virtual bool IsDelete() { return false; }
-
+	void SetCounterFlag() { m_counterFlag = true; }
+	Vec3 GetVelocity() { return m_velocity; }
+	void SetVelocity(Vec3 vel) { m_velocity = vel; }
+	void DeleteFlag() { m_isDeleteFlag = true; }
+	bool GetCounterFlag() { return m_counterFlag; }
 	//メンバ関数ポインタ
 	using MoveState_t = void(EnemySphere::*)();
 	MoveState_t m_moveUpdate;
 
 protected:
-	void  StraightUpdate();//球を直線状に飛ばす
+	virtual void  StraightUpdate();//球を直線状に飛ばす
 
 protected:
 
 
 	int m_color = 0;
 	bool m_isDeleteFlag = 0;
+	bool m_counterFlag;
 
 	float m_radius = 0;
 

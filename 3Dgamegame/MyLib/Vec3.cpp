@@ -183,8 +183,6 @@ void Vec3::SetVECTOR(DxLib::VECTOR vec)
 	x = vec.x, y = vec.y, z = vec.z;
 }
 
-
-
 float Dot(const Vec3& item1, const Vec3& item2)
 {
 	return item1.x * item2.x + item1.y * item2.y + item1.z * item2.z;

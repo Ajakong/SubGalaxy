@@ -11,6 +11,7 @@ namespace MyEngine
 		{
 			Sphere,
 			Capsule,
+			Box,
 		};
 
 		// コンストラクタ

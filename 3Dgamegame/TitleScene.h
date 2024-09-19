@@ -3,11 +3,22 @@
 #include <string>
 #include <vector>
 #include <map>
+#include"MyLib/Vec3.h"
+#include"SoundManager.h"
 
 class SceneMain;
 
+
 class TitleScene : public Scene
 {
+
+    struct Sphere
+    {
+        Vec3 pos;
+        Vec3 axis;
+        int color;
+    };
+
 public:
     TitleScene(SceneManager& manager);
     ~TitleScene();
@@ -20,20 +31,27 @@ public:
 private:
 
     int m_titleHandle = 0;
+    int m_titleBGMHandle;
+    int m_gameStartSEHandle;
     int m_modelHandle[10] = { 0 };
     int m_model_dance = 0;
     int m_attach_move[10] = { 0 };
+    int m_gamePlayingBgmHandle;
+    int m_frameHandle = 0;
 
     int m_btnFrame = 0;
+    int m_fadeSpeed = 0;
     int m_frame = 0;
+    int m_soundVolume = 0;
 
     bool m_back = false;
 
+    std::vector<Sphere> m_spherePos;
 
     int m_stageBgm = 0;
 
     int m_backBlack = 0;
-
+    float m_angle=0;
 
     float m_fps = 0.0f;
 

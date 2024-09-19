@@ -50,15 +50,13 @@ private:
     UpdateFunc_t m_updateFunc = nullptr;
     DrawFunc_t m_drawFunc = nullptr;
 
-
-
     // çXêVä÷êî
     void FadeInUpdate();
     void NormalUpdate();
     void FadeOutUpdate();
 
     void ChangeScene(std::shared_ptr<Scene> nextScene);
-
+    void PushScene(std::shared_ptr<Scene> nextScene);
     // ï`âÊä÷êî
     void FadeDraw();
     void NormalDraw();

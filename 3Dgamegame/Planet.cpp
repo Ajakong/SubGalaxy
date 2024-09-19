@@ -3,6 +3,7 @@
 
 
 Planet::Planet():Collidable(Priority::Static, ObjectTag::Stage),
+m_isSearch(false),
 	gravityPower(0),
 	modelH(-1)
 {

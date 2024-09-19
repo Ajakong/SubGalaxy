@@ -7,6 +7,7 @@
 #include<vector>
 #include"Game.h"
 #include <DxLib.h>
+#include <EffekseerForDXLib.h>
 #include <cassert>
 
 #include"WorldTimer.h"
@@ -34,6 +35,7 @@ Application::Application()
 
 void Application::Terminate()
 {
+    Effkseer_End();
     DxLib_End();
 }
 
@@ -51,6 +53,10 @@ bool Application::Init()
 {
     ChangeWindowMode(true); // ウィンドウモードにします
     //SetGraphMode(m_windowSize.w, m_windowSize.h, 1);
+
+    SetUseDirect3DVersion(DX_DIRECT3D_11);
+
+
     SetWindowSizeChangeEnableFlag(TRUE, TRUE);
     SetChangeScreenModeGraphicsSystemResetFlag(false);
 
@@ -71,13 +77,15 @@ bool Application::Init()
     SetWriteZBuffer3D(true);
     SetUseBackCulling(true);
 
+    Effekseer_Init(8000);
+    Effekseer_InitDistortion();
+    Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
     SetWindowText("Astro Seeker");
     if (DxLib_Init() == -1)
     {
         return false;
     }
-
 
     SetDrawScreen(DX_SCREEN_BACK);
     return true;
@@ -88,14 +96,11 @@ void Application::Run()
     {// スコープを強制的に作っている
 
         SceneManager sceneManager;
-        sceneManager.ChangeScene(std::make_shared<GamePlayingScene>(sceneManager));
-
+        sceneManager.ChangeScene(std::make_shared<TitleScene>(sceneManager));
 
         m_screenHandle = MakeScreen(Game::kScreenWidth, Game::kScreenHeight, true);
 
         LONGLONG time;
-
-        
 
         while (ProcessMessage() != -1)
         {
@@ -108,11 +113,12 @@ void Application::Run()
                 ChangeWindowMode(true);
             }
 
+            Effekseer_Sync3DSetting();
 
             sceneManager.Update();
+            UpdateEffekseer3D();
             sceneManager.Draw();
-
-
+            DrawEffekseer3D();
             
             ScreenFlip();
 
@@ -120,9 +126,7 @@ void Application::Run()
             while (16667 > GetNowHiPerformanceCount() - time) {};
         }
     }
-    //Terminate();
-    std::vector<VECTOR> num;
-
+    Terminate();
 }
 
 

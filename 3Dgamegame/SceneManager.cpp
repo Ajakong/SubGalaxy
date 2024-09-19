@@ -1,6 +1,11 @@
 #include "SceneManager.h"
 #include "Scene.h"
 
+namespace NextScene
+{
+
+}
+
 SceneManager::SceneManager()
 {
 }
@@ -30,7 +35,7 @@ void SceneManager::ChangeScene(std::shared_ptr<Scene> nextScene)
 		m_scenes.push_back(nextScene);	// ––”ö‚É’Ç‰Á‚·‚é
 	}
 	else {
-		m_scenes.back() = nextScene;	// ‘fè‚Éˆê‚ÂˆÈã‚ ‚Á‚½‚ç––”ö‚Ì‚à‚Ì‚ğ“ü‚ê‘Ö‚¦‚é
+		m_scenes.back() = nextScene;	// ‚·‚Å‚Éˆê‚ÂˆÈã‚ ‚Á‚½‚ç––”ö‚Ì‚à‚Ì‚ğ“ü‚ê‘Ö‚¦‚é
 	}
 }
 
@@ -50,6 +55,12 @@ void SceneManager::PushScene(std::shared_ptr<Scene> scene)
 void SceneManager::PopScene()
 {
 	m_scenes.pop_back();
+}
+
+void SceneManager::ResetScene(std::shared_ptr<Scene> scene)
+{
+	m_scenes.clear();
+	m_scenes.push_back(scene);
 }
 
 std::shared_ptr<Scene> SceneManager::LookBack()

@@ -112,14 +112,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);NOMINMAX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(EFKLIB_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\プロジェクトに追加すべきファイル_VC用</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(EFKLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\プロジェクトに追加すべきファイル_VC用</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,7 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);NOMINMAX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(EFKLIB_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\プロジェクトに追加すべきファイル_VC用</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -139,23 +139,33 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(EFKLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\プロジェクトに追加すべきファイル_VC用</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BossPlanet.cpp" />
+    <ClCompile Include="BoxPlanet.cpp" />
     <ClCompile Include="ColliderHelper.cpp" />
+    <ClCompile Include="EffectManager.cpp" />
     <ClCompile Include="EnemyAccessor.cpp" />
     <ClCompile Include="Enemy\Enemy.cpp" />
     <ClCompile Include="Enemy\EnemyAI.cpp" />
     <ClCompile Include="Enemy\EnemyManager.cpp" />
     <ClCompile Include="Enemy\EnemyMover.cpp" />
     <ClCompile Include="Enemy\EnemySphere.cpp" />
+    <ClCompile Include="Enemy\Gorori.cpp" />
+    <ClCompile Include="Enemy\Killer.cpp" />
+    <ClCompile Include="Enemy\KillerTheSeeker.cpp" />
     <ClCompile Include="Enemy\Takobo.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="FontManager.cpp" />
+    <ClCompile Include="GraphManager.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="MyLib\DebugDraw.cpp" />
     <ClCompile Include="MyLib\Geometry.cpp" />
     <ClCompile Include="MyLib\Physics\Collidable.cpp" />
     <ClCompile Include="MyLib\Physics\ColliderBase.cpp" />
+    <ClCompile Include="MyLib\Physics\ColliderBox.cpp" />
     <ClCompile Include="MyLib\Physics\ColliderCapsule.cpp" />
     <ClCompile Include="MyLib\Physics\ColliderSphere.cpp" />
     <ClCompile Include="MyLib\Physics\Physics.cpp" />
@@ -170,34 +180,51 @@
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="GamePlayingScene.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Object\ClearObject.cpp" />
+    <ClCompile Include="Object\Item.cpp" />
+    <ClCompile Include="Object\WarpGate.cpp" />
     <ClCompile Include="Pad.cpp" />
+    <ClCompile Include="PauseScene.cpp" />
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="ScreenManager.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="SpherePlanet.cpp" />
     <ClCompile Include="System\AFile.cpp" />
     <ClCompile Include="System\Model.cpp" />
     <ClCompile Include="System\ModelLoader.cpp" />
     <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="Ui.cpp" />
     <ClCompile Include="WorldTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BossPlanet.h" />
+    <ClInclude Include="BoxPlanet.h" />
     <ClInclude Include="ColliderHelper.h" />
+    <ClInclude Include="EffectManager.h" />
     <ClInclude Include="Enemy\Enemy.h" />
     <ClInclude Include="Enemy\EnemyAccessor.h" />
     <ClInclude Include="Enemy\EnemyAI.h" />
     <ClInclude Include="Enemy\EnemyManager.h" />
     <ClInclude Include="Enemy\EnemyMover.h" />
     <ClInclude Include="Enemy\EnemySphere.h" />
+    <ClInclude Include="Enemy\Gorori.h" />
+    <ClInclude Include="Enemy\Killer.h" />
+    <ClInclude Include="Enemy\KillerTheSeeker.h" />
     <ClInclude Include="Enemy\Takobo.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="FontManager.h" />
+    <ClInclude Include="GraphManager.h" />
+    <ClInclude Include="ModelManager.h" />
     <ClInclude Include="MyLib\DebugDraw.h" />
     <ClInclude Include="MyLib\Geometry.h" />
     <ClInclude Include="MyLib\ObjectTag.h" />
     <ClInclude Include="MyLib\Physics\Collidable.h" />
     <ClInclude Include="MyLib\Physics\ColliderBase.h" />
+    <ClInclude Include="MyLib\Physics\ColliderBox.h" />
     <ClInclude Include="MyLib\Physics\ColliderCapsule.h" />
     <ClInclude Include="MyLib\Physics\ColliderSphere.h" />
     <ClInclude Include="MyLib\Physics\Physics.h" />
@@ -212,17 +239,24 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="GamePlayingScene.h" />
+    <ClInclude Include="Object\ClearObject.h" />
+    <ClInclude Include="Object\Item.h" />
+    <ClInclude Include="Object\WarpGate.h" />
     <ClInclude Include="Pad.h" />
+    <ClInclude Include="PauseScene.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="ScreenManager.h" />
+    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="SpherePlanet.h" />
     <ClInclude Include="System\AFile.h" />
     <ClInclude Include="System\Model.h" />
     <ClInclude Include="System\ModelLoader.h" />
     <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="Ui.h" />
     <ClInclude Include="WorldTimer.h" />
   </ItemGroup>
   <ItemGroup>

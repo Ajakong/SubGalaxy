@@ -15,6 +15,8 @@ private:
 
     int m_btnFrame = 0;
     int m_frame;
+    int m_numFontHandle;
+    int m_fontHandle;
 
     // メンバ関数ポインタの宣言
     using UpdateFunc_t = void (ClearScene::*)();
@@ -26,6 +28,8 @@ private:
     void FadeInUpdate();
     void NormalUpdate();
     void FadeOutUpdate();
+
+    void ChangeScene(std::shared_ptr<Scene> nextScene);
 
     // 描画状態を表す関数
     void FadeDraw();

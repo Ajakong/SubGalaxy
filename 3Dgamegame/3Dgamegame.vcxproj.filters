@@ -25,9 +25,6 @@
     <Filter Include="ソース ファイル\Enemy">
       <UniqueIdentifier>{dc8f0ad0-8af5-4449-af2a-79b8ff4fc1ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\System">
-      <UniqueIdentifier>{22f1c380-6dca-447d-b67c-09717d435bd2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Enemy\Takobo">
       <UniqueIdentifier>{5a693aac-96a1-48ab-aae4-fffd290c47ed}</UniqueIdentifier>
     </Filter>
@@ -49,17 +46,35 @@
     <Filter Include="ソース ファイル\MyLib\Physics\h">
       <UniqueIdentifier>{25dd61ec-7fe9-4db4-a851-2d615cfefba9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\System\cpp">
-      <UniqueIdentifier>{64ad4fcd-fcc2-4ea8-a7a5-ff4afedce9ba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\System\h">
-      <UniqueIdentifier>{cc414c8b-cbf1-4cc6-8d20-8301a5a5b137}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Planet\cpp">
       <UniqueIdentifier>{e0a1347d-8616-4b5c-8d8b-587e594a050f}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Planet\h">
       <UniqueIdentifier>{91136f27-1a5d-4ba5-b3b0-0c26ef5be65a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Enemy\Gorori">
+      <UniqueIdentifier>{ef6883a8-3d96-47a6-a3b4-74504e60ba98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Enemy\KillerTheSeeker">
+      <UniqueIdentifier>{8ccfe036-a0cb-4fda-8811-93125473ffa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Object">
+      <UniqueIdentifier>{c45bb040-e062-4cbd-8438-1f939603c871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Object\cpp">
+      <UniqueIdentifier>{82990109-e20a-4e49-a274-0cc9c21f934a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Object\h">
+      <UniqueIdentifier>{406f40c7-6d69-4451-88f7-8f1aef7ec5f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Planet\h\System">
+      <UniqueIdentifier>{22f1c380-6dca-447d-b67c-09717d435bd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Planet\h\System\cpp">
+      <UniqueIdentifier>{64ad4fcd-fcc2-4ea8-a7a5-ff4afedce9ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Planet\h\System\h">
+      <UniqueIdentifier>{cc414c8b-cbf1-4cc6-8d20-8301a5a5b137}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -160,13 +175,13 @@
       <Filter>ソース ファイル\MyLib\Physics\cpp</Filter>
     </ClCompile>
     <ClCompile Include="System\AFile.cpp">
-      <Filter>ソース ファイル\System\cpp</Filter>
+      <Filter>ソース ファイル\Planet\h\System\cpp</Filter>
     </ClCompile>
     <ClCompile Include="System\Model.cpp">
-      <Filter>ソース ファイル\System\cpp</Filter>
+      <Filter>ソース ファイル\Planet\h\System\cpp</Filter>
     </ClCompile>
     <ClCompile Include="System\ModelLoader.cpp">
-      <Filter>ソース ファイル\System\cpp</Filter>
+      <Filter>ソース ファイル\Planet\h\System\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Planet.cpp">
       <Filter>ソース ファイル\Planet\cpp</Filter>
@@ -179,6 +194,57 @@
     </ClCompile>
     <ClCompile Include="MyLib\Geometry.cpp">
       <Filter>ソース ファイル\MyLib\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\WarpGate.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy\Gorori.cpp">
+      <Filter>ソース ファイル\Enemy\Gorori</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxPlanet.cpp">
+      <Filter>ソース ファイル\Planet\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FontManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Physics\ColliderBox.cpp">
+      <Filter>ソース ファイル\MyLib\Physics\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy\KillerTheSeeker.cpp">
+      <Filter>ソース ファイル\Enemy\KillerTheSeeker</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy\Killer.cpp">
+      <Filter>ソース ファイル\Enemy\KillerTheSeeker</Filter>
+    </ClCompile>
+    <ClCompile Include="BossPlanet.cpp">
+      <Filter>ソース ファイル\Planet\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\ClearObject.cpp">
+      <Filter>ソース ファイル\Object\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Item.cpp">
+      <Filter>ソース ファイル\Object\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="PauseScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenManager.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -276,13 +342,13 @@
       <Filter>ソース ファイル\MyLib\Physics\h</Filter>
     </ClInclude>
     <ClInclude Include="System\AFile.h">
-      <Filter>ソース ファイル\System\h</Filter>
+      <Filter>ソース ファイル\Planet\h\System\h</Filter>
     </ClInclude>
     <ClInclude Include="System\Model.h">
-      <Filter>ソース ファイル\System\h</Filter>
+      <Filter>ソース ファイル\Planet\h\System\h</Filter>
     </ClInclude>
     <ClInclude Include="System\ModelLoader.h">
-      <Filter>ソース ファイル\System\h</Filter>
+      <Filter>ソース ファイル\Planet\h\System\h</Filter>
     </ClInclude>
     <ClInclude Include="Planet.h">
       <Filter>ソース ファイル\Planet\h</Filter>
@@ -301,6 +367,57 @@
     </ClInclude>
     <ClInclude Include="Enemy\EnemyManager.h">
       <Filter>ソース ファイル\Enemy\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\WarpGate.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy\Gorori.h">
+      <Filter>ソース ファイル\Enemy\Gorori</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxPlanet.h">
+      <Filter>ソース ファイル\Planet\h</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FontManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\ColliderBox.h">
+      <Filter>ソース ファイル\MyLib\Physics\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy\KillerTheSeeker.h">
+      <Filter>ソース ファイル\Enemy\KillerTheSeeker</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy\Killer.h">
+      <Filter>ソース ファイル\Enemy\KillerTheSeeker</Filter>
+    </ClInclude>
+    <ClInclude Include="BossPlanet.h">
+      <Filter>ソース ファイル\Planet\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\ClearObject.h">
+      <Filter>ソース ファイル\Object\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Item.h">
+      <Filter>ソース ファイル\Object\h</Filter>
+    </ClInclude>
+    <ClInclude Include="PauseScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenManager.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

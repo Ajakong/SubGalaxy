@@ -10,7 +10,7 @@ using namespace MyEngine;
 namespace
 {
 	// 判定最大回数
-	constexpr int CHECK_COUNT_MAX = 1000;
+	constexpr int CHECK_COUNT_MAX = 500;
 }
 
 Physics::Physics()
@@ -60,7 +60,7 @@ void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
 	// 登録済みなら削除
 	if (it!= m_collidables.end())
 	{
-		int index = distance(m_collidables.begin(), it);
+		int index =static_cast<int>( distance(m_collidables.begin(), it));
 		auto iterater = m_collidables.begin();
 		for (int i = 0; i < index; i++)
 		{
@@ -94,8 +94,32 @@ void Physics::Update()
 
 	for (const auto& info : m_onCollideInfo)
 	{
+		if (static_cast<int>(info.send->m_tag) > 10|| static_cast<int>(info.send->m_tag)<0)continue;//応急処置済み:Exitしても履歴に残っているが参照できずに例外がスローされる
+		if (static_cast<int>(info.own->m_tag) > 10 || static_cast<int>(info.own->m_tag) < 0)continue;//:上に同じ
+		if (info.own->GetTag() == ObjectTag::ClearObject)
+		{
+			int a = 0;
+		}
 		OnCollideInfo(info.own, info.send, info.kind);
 	}
+
+	for (const auto& item : m_collidables)
+	{
+		item->m_rigid->SetPrevVelocity(item->m_rigid->GetVelocity());
+		item->m_rigid->SetVelocity(Vec3(0, 0, 0));
+	}
+}
+
+void MyEngine::Physics::Clear()
+{
+	m_collidables.clear();
+	m_stageCollidables.clear();
+
+	m_onCollideInfo.clear();
+	m_newCollideInfo.clear();
+	m_preCollideInfo.clear();
+	m_newTirrigerInfo.clear();
+	m_preTirrigerInfo.clear();
 }
 
 /// <summary>
@@ -119,7 +143,7 @@ void MyEngine::Physics::MoveNextPos() const
 							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol))
 							{
 								planet->OnTriggerEnter(obj);
-								obj->m_rigid.SetVelocity(planet->GravityEffect(obj));
+								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
 							}
 
 						}
@@ -137,10 +161,10 @@ void MyEngine::Physics::MoveNextPos() const
 	{
 		auto& rigid = item->m_rigid;
 
-		auto pos = rigid.GetPos();
-		auto nextPos = pos + rigid.GetVelocity();
+		auto pos = rigid->GetPos();
+		auto nextPos = pos + rigid->GetVelocity();
 
-		rigid.SetNextPos(nextPos);
+		rigid->SetNextPos(nextPos);
 
 #ifdef _DEBUG
 		auto& debug = DebugDraw::GetInstance();
@@ -171,12 +195,12 @@ void MyEngine::Physics::CheckCollide()
 {
 	bool isCheck = true;
 	int checkCount = 0;
-	std::unordered_map<Collidable*, std::list<Collidable*>> newCollideInfo;
+	std::unordered_map<std::shared_ptr<Collidable>, std::list<std::shared_ptr<Collidable>>> newCollideInfo;
 	while (isCheck)
 	{
 		isCheck = false;
 		++checkCount;
-
+		
 		for (const auto& objA : m_collidables)
 		{
 			for (const auto& objB : m_collidables)
@@ -188,19 +212,18 @@ void MyEngine::Physics::CheckCollide()
 				{
 					for (const auto& colB : objB->m_colliders)
 					{
-
-
 						if (!IsCollide(objA->m_rigid, objB->m_rigid, colA, colB)) continue;
 
 						bool isTrigger = colA->isTrigger || colB->isTrigger;
 
 						if (isTrigger)
 						{
-							AddNewCollideInfo(objA.get(), objB.get(), m_newTirrigerInfo);
+							AddNewCollideInfo(objA, objB, m_newTirrigerInfo);
 						}
 						else
 						{
-							AddNewCollideInfo(objA.get(), objB.get(), m_newCollideInfo);
+							
+							AddNewCollideInfo(objA, objB, m_newCollideInfo);
 						}
 
 
@@ -239,13 +262,13 @@ void MyEngine::Physics::CheckCollide()
 
 		if (isCheck && checkCount > CHECK_COUNT_MAX)
 		{
-			printfDx("規定数(%d)を超えました", CHECK_COUNT_MAX);
+			//printfDx("規定数(%d)を超えました", CHECK_COUNT_MAX);
 			break;
 		}
 	}
 }
 
-bool Physics::IsCollide(const Rigidbody& rigidA, const Rigidbody& rigidB, const std::shared_ptr<ColliderBase>& colliderA, const std::shared_ptr<ColliderBase>& colliderB) const
+bool Physics::IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<ColliderBase>& colliderA, const std::shared_ptr<ColliderBase>& colliderB) const
 {
 
 	bool isCollide = false;
@@ -258,7 +281,7 @@ bool Physics::IsCollide(const Rigidbody& rigidA, const Rigidbody& rigidB, const 
 		auto sphereA = dynamic_cast<ColliderSphere*>(colliderA.get());
 		auto sphereB = dynamic_cast<ColliderSphere*>(colliderB.get());
 
-		auto aToB = rigidB.GetNextPos() - rigidA.GetNextPos();
+		auto aToB = rigidB->GetNextPos() - rigidA->GetNextPos();
 		float sumRadius = sphereA->radius + sphereB->radius;
 		isCollide = (aToB.SqLength() < sumRadius * sumRadius);
 	}
@@ -266,9 +289,9 @@ bool Physics::IsCollide(const Rigidbody& rigidA, const Rigidbody& rigidB, const 
 	return isCollide;
 }
 
-void MyEngine::Physics::FixNextPos(const Rigidbody& primaryRigid, Rigidbody& secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider)
+void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider)
 {
-	Vec3 fixedPos = secondaryRigid.GetNextPos();
+	Vec3 fixedPos = secondaryRigid->GetNextPos();
 
 	auto primaryKind = primaryCollider->GetKind();
 	auto secondaryKind = secondaryCollider->GetKind();
@@ -281,20 +304,20 @@ void MyEngine::Physics::FixNextPos(const Rigidbody& primaryRigid, Rigidbody& sec
 			auto secondarySphere = dynamic_cast<ColliderSphere*>(secondaryCollider.get());
 
 			// primaryからsecondaryへのベクトルを作成
-			auto primaryToSecondary = secondaryRigid.GetNextPos() - primaryRigid.GetNextPos();
+			auto primaryToSecondary = secondaryRigid->GetNextPos() - primaryRigid->GetNextPos();
 			// そのままだとちょうど当たる位置になるので少し余分に離す
 			float  awayDist = primarySphere->radius + secondarySphere->radius + 0.0001f;
 			// 長さを調整
 			primaryToSecondary = primaryToSecondary.GetNormalized() * awayDist;
 			// primaryからベクトル方向に押す
-			fixedPos = primaryRigid.GetNextPos() + primaryToSecondary;
+			fixedPos = primaryRigid->GetNextPos() + primaryToSecondary;
 		}
 	}
 
-	secondaryRigid.SetNextPos(fixedPos);
+	secondaryRigid->SetNextPos(fixedPos);
 }
 
-void MyEngine::Physics::AddNewCollideInfo(Collidable* objA, Collidable* objB, SendCollideInfo& info)
+void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<Collidable> objA, std::shared_ptr<Collidable> objB, SendCollideInfo& info)
 {
 	// Aが親として取得しているか
 	bool isParentA = info.find(objA) != info.end();
@@ -303,8 +326,8 @@ void MyEngine::Physics::AddNewCollideInfo(Collidable* objA, Collidable* objB, Se
 	// AがBどちらかが取得している場合
 	if (isParentA || isParentB)
 	{
-		Collidable* parent = objA;
-		Collidable* child = objB;
+		std::shared_ptr<Collidable> parent = objA;
+		std::shared_ptr<Collidable> child = objB;
 		if (isParentB)
 		{
 			parent = objB;
@@ -359,7 +382,7 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 				}
 			}
 
-			// Staryは毎度呼ぶ
+			// Stayは毎度呼ぶ
 			if (isTrigger)
 			{
 				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::TriggerStay);
@@ -409,7 +432,7 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 	}
 }
 
-void MyEngine::Physics::AddOnCollideInfo(Collidable* own, Collidable* send, OnCollideInfoKind kind)
+void MyEngine::Physics::AddOnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, OnCollideInfoKind kind)
 {
 	OnCollideInfoData info;
 	info.own = own;
@@ -418,9 +441,9 @@ void MyEngine::Physics::AddOnCollideInfo(Collidable* own, Collidable* send, OnCo
 	m_onCollideInfo.emplace_back(info);
 }
 
-void MyEngine::Physics::OnCollideInfo(Collidable* own, Collidable* send, OnCollideInfoKind kind)
+void MyEngine::Physics::OnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, OnCollideInfoKind kind)
 {
-	auto item=std::make_shared<Collidable>(send);
+	auto item=send;
 	if (kind == OnCollideInfoKind::CollideEnter)
 	{
 		own->OnCollideEnter(item);
@@ -456,7 +479,7 @@ void Physics::FixPos() const
 	{
 		auto& rigid = item->m_rigid;
 
-		rigid.SetPos(rigid.GetNextPos());
+		rigid->SetPos(rigid->GetNextPos());
 
 #ifdef _DEBUG
 		auto& debug = DebugDraw::GetInstance();
@@ -467,7 +490,7 @@ void Physics::FixPos() const
 			{
 				auto sphereData = dynamic_cast<ColliderSphere*>(collider.get());
 				DebugDraw::SphereInfo info;
-				info.center = rigid.GetPos();
+				info.center = rigid->GetPos();
 				info.radius = sphereData->radius;
 				info.color = DebugDraw::COL_AFFTER;
 				debug.DrawSphere(info);

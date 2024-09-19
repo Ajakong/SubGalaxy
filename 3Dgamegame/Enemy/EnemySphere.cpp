@@ -11,14 +11,14 @@ namespace
 	/// ãÖÇÃê∂ê¨ä‘äu
 	/// </summary>
 	constexpr int kSphereCreateFrame = 50;
-
+	const char* name = "Sphere";
 }
 EnemySphere::EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity, int moveNum, int color) : Collidable(priority,tag),
 m_enemy(std::dynamic_pointer_cast<Enemy>(enemy)),
 m_radius(kSphereRadius),
 m_velocity(velocity)
 {
-	m_rigid.SetPos(pos);
+	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = m_radius;
@@ -46,18 +46,21 @@ void EnemySphere::Update()
 
 void EnemySphere::Draw()
 {
-	DrawSphere3D(m_rigid.GetPos().VGet(), kSphereRadius, 10, 0xffff00, m_color, false);
+	DrawSphere3D(m_rigid->GetPos().VGet(), kSphereRadius, 10, 0xffff00, m_color, false);
 }
 
 void EnemySphere::Hit()
 {
 	//m_isDeleteFlag = true;
+}
 
+void EnemySphere::OnCollideEnter(std::shared_ptr<Collidable> colider)
+{
 }
 
 void EnemySphere::StraightUpdate()
 {
-	m_rigid.SetVelocity(VGet(m_velocity.x * 20, m_velocity.y * 20, m_velocity.z * 20));
+	m_rigid->SetVelocity(VGet(m_velocity.x * 20, m_velocity.y * 20, m_velocity.z * 20));
 }
 
 void EnemySphere::DeleteJudge()

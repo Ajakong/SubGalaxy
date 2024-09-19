@@ -34,7 +34,6 @@ private:
 			Q tempQ;
 
 			/*クオータニオンの掛け算*/
-			//公式通りです。
 			tempQ.w = w * _q.w - x * _q.x - y * _q.y - z * _q.z;//実部
 			tempQ.x = w * _q.x + x * _q.w + y * _q.z - z * _q.y;//虚部x
 			tempQ.y = w * _q.y + y * _q.w + z * _q.x - x * _q.z;//虚部y
@@ -50,8 +49,9 @@ public:
 
 	void SetQuaternion(Vec3 pos) { Qu.w = 1.0; Qu.x = pos.x; Qu.y = pos.y; Qu.z = pos.z; }
 
-	void SetMove(float _angle, Vec3 _axis)
+	void SetMove(float _angle, Vec3 _axis)//回転軸と角速度の設定
 	{
+		_axis.Normalize();
 		Qu.w = cos(_angle / 2.0f);//実部
 		Qu.x = _axis.x * sin(_angle / 2.0f);
 		Qu.y = _axis.y * sin(_angle / 2.0f);

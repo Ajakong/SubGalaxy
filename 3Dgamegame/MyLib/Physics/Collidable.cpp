@@ -6,12 +6,13 @@ using namespace MyEngine;
 
 Collidable::Collidable(Priority priority, ObjectTag tag) :
 	m_priority(priority),
-	m_tag(tag)
+	m_tag(tag),
+	m_isAntiGravity(false)
 {
-	
+	m_rigid = std::make_shared<Rigidbody>();
 }
 
-MyEngine::Collidable::Collidable(Collidable* col) :
+MyEngine::Collidable::Collidable(std::shared_ptr<Collidable> col) :
 	m_rigid(col->m_rigid),
 	m_colliders(col->m_colliders),
 	m_upVec(col->m_upVec),
@@ -19,6 +20,7 @@ MyEngine::Collidable::Collidable(Collidable* col) :
 	m_tag(col->m_tag),
 	m_priority(col->m_priority)
 {
+	m_rigid = std::make_shared<Rigidbody>();
 }
 
 Collidable::~Collidable()
