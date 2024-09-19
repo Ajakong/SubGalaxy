@@ -1,6 +1,7 @@
 #include "Takobo.h"
 #include"../MyLib/Physics/ColliderSphere.h"
 #include"../MyLib/Physics/Physics.h"
+#include"../SoundManager.h"
 
 namespace
 {
@@ -9,7 +10,7 @@ namespace
 	/// <summary>
 		/// 最大HP
 		/// </summary>
-	constexpr int kHp = 80;
+	constexpr int kHp = 50;
 
 	constexpr int kStartPosX = 200;
 	constexpr int kStartPosY = 50;
@@ -38,30 +39,35 @@ namespace
 	/// </summary>
 	constexpr int kStageSizeHalf = 200;
 
+	const char* kShotSEhandlePath = "Shot.mp3";
 
-
+	const char* name = "takobo";
 }
 
-/*プロトタイプ宣言*/
-Vec3 ToVec(Vec3 a, Vec3 b);
-Vec3 norm(Vec3 a);
-float lerp(float start, float end, float t);
 
-Takobo::Takobo(Vec3 pos) :Enemy(MV1LoadModel("../Model/Enemy/bodyeater.mv1"), Priority::Low, ObjectTag::Takobo),
+Takobo::Takobo(Vec3 pos) :Enemy(-1, Priority::Low, ObjectTag::Takobo),
 m_Hp(kHp),
 m_attackCoolDownCount(0),
 m_centerToEnemyAngle(0)
 {
+	SetCreate3DSoundFlag(true);
+	m_shotSEHandle = SoundManager::GetInstance().GetSoundData(kShotSEhandlePath);
+	SetCreate3DSoundFlag(false);
+	Set3DRadiusSoundMem(1000, m_shotSEHandle);
 	m_enemyUpdate = &Takobo::IdleUpdate;
-	m_rigid.SetPos(pos);
+	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = kCollisionRadius;
-	m_moveShaftPos = m_rigid.GetPos();
+	m_moveShaftPos = m_rigid->GetPos();
+	AddThroughTag(ObjectTag::Takobo);
+	AddThroughTag(ObjectTag::Gorori);
+	AddThroughTag(ObjectTag::WarpGate);
 }
 
 Takobo::~Takobo()
 {
+
 }
 
 void Takobo::Init()
@@ -76,9 +82,20 @@ void Takobo::Update()
 	{
 		if (m_sphere.size() == 0)return;
 		sphere->Update();
-
 	}
 
+
+}
+
+void Takobo::SetMatrix()
+{
+	MATRIX moving = MGetTranslate(m_rigid->GetPos().VGet());
+
+	MV1SetMatrix(m_handle, moving);
+}
+
+void Takobo::DeleteManage()
+{
 	auto result = remove_if(m_sphere.begin(), m_sphere.end(), [this](const auto& sphere)
 		{
 			bool isOut = sphere->IsDelete() == true;
@@ -92,49 +109,59 @@ void Takobo::Update()
 	m_sphere.erase(result, m_sphere.end());
 }
 
-void Takobo::SetMatrix()
-{
-	MATRIX moving = MGetTranslate(m_rigid.GetPos().VGet());
-
-	MV1SetMatrix(m_handle, moving);
-}
-
 void Takobo::Draw()
 {
 
-	DrawSphere3D(m_rigid.GetPos().VGet(), kCollisionRadius, 10, 0xff0000, 0xff0000, false);
+	DrawSphere3D(m_rigid->GetPos().VGet(), kCollisionRadius, 10, 0xff0000, 0xff0000, false);
 	MV1DrawModel(m_handle);
 
 	for (auto& sphere : m_sphere)
 	{
 		if (m_sphere.size() == 0)return;
 		sphere->Draw();
-
 	}
 }
 
 void Takobo::OnCollideEnter(std::shared_ptr<Collidable> colider)
 {
+	if (colider->GetTag() == ObjectTag::Stage)
+	{
+		m_nowPlanetPos = colider->GetRigidbody()->GetPos();
+	}
 	if (colider->GetTag() == ObjectTag::Player)
 	{
 		m_Hp -= 20;
+	}
+	if (colider->GetTag() == ObjectTag::EnemyAttack)
+	{
+		auto attack= dynamic_pointer_cast<EnemySphere>(colider);
+		attack->DeleteFlag();
+		if (attack->GetCounterFlag())
+		{
+			m_Hp -= 60;
+		}
 	}
 }
 
 Vec3 Takobo::GetMyPos()
 {
-	return  VGet(m_rigid.GetPos().x, m_rigid.GetPos().y + kFootToCenter, m_rigid.GetPos().z);;
+	return  VGet(m_rigid->GetPos().x, m_rigid->GetPos().y + kFootToCenter, m_rigid->GetPos().z);
+}
+
+void Takobo::SetTarget(std::shared_ptr<Collidable> target)
+{
+	m_target = target;
 }
 
 void Takobo::IdleUpdate()
 {
 	m_vec.x = 1;
-	if (abs(m_rigid.GetPos().x - m_moveShaftPos.x) > 5)
+	if (abs(m_rigid->GetPos().x - m_moveShaftPos.x) > 5)
 	{
 		m_vec.x *= -1;
 	}
 
-	m_rigid.SetVelocity(VGet(m_vec.x, 0, 0));
+	m_rigid->SetVelocity(VGet(m_vec.x, 0, 0));
 
 	m_attackCoolDownCount++;
 
@@ -144,13 +171,22 @@ void Takobo::IdleUpdate()
 		switch (attackState)
 		{
 		case 0:
-			m_attackCoolDownCount = 0;
-			m_enemyUpdate = &Takobo::AttackSphereUpdate;
+		{
+			Vec3 norm = (m_rigid->GetPos() - m_nowPlanetPos).GetNormalized();
+			Vec3 toTarget = ToVec(norm, m_target->GetRigidbody()->GetPos());
+			if (toTarget.Length() > 500)break;
+			float a = acos(Dot(norm, toTarget.GetNormalized())) * 180 / DX_PI_F;
 
-			/*m_attackCoolDownCount = 0;
-			m_enemyUpdate = &Enemy::AttackBombUpdate;*/
+			if (a < 120)
+			{
+				m_attackCoolDownCount = 0;
+				m_attackDir = GetAttackDir();//オブジェクトに向かうベクトルを正規化したもの
+				m_enemyUpdate = &Takobo::AttackSphereUpdate;
+			}
+			break;
+		}
 		default:
-			m_attackCoolDownCount =250;
+			m_attackCoolDownCount = 250;
 			break;
 		}
 	}
@@ -158,26 +194,23 @@ void Takobo::IdleUpdate()
 
 void Takobo::AttackSphereUpdate()
 {
-	m_rigid.SetVelocity(VGet(0, 0, 0));
-
+	m_rigid->SetVelocity(VGet(0, 0, 0));
 
 	m_sphereNum++;
-	if (m_sphereNum <= 5)
-	{
-		m_attackDir = GetAttackDir();//オブジェクトに向かうベクトルを正規化したもの
 
-		m_createFrameCount = 0;
-		m_sphere.push_back(std::make_shared<EnemySphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), GetMyPos(), m_attackDir, 1, 0xff0000));
-		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
-	}
+	m_createFrameCount = 0;
+	Set3DPositionSoundMem(m_rigid->GetPos().VGet(), m_shotSEHandle);
+	PlaySoundMem(m_shotSEHandle,DX_PLAYTYPE_BACK);
+	m_sphere.push_back(std::make_shared<EnemySphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), GetMyPos(), m_attackDir, 1, 0xff0000));
+	MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 
 	m_enemyUpdate = &Takobo::IdleUpdate;
 }
 
 Vec3 Takobo::GetAttackDir() const
 {
-	Vec3 toVec = ToVec(m_rigid.GetPos(), VGet(0, 0, 0));
-	Vec3 vec = norm(ToVec(m_rigid.GetPos(), VGet(0, 0, 0)));
+	Vec3 toVec = ToVec(m_rigid->GetPos(), m_target->GetRigidbody()->GetPos());
+	Vec3 vec = norm(ToVec(m_rigid->GetPos(), m_target->GetRigidbody()->GetPos()));
 	vec = VGet(vec.x * abs(toVec.x), vec.y * abs(toVec.y), vec.z * abs(toVec.z));
 	return vec;
 }
@@ -306,24 +339,3 @@ Vec3 Takobo::GetAttackDir() const
 //	}
 //}
 
-
-/*便利関数*/
-//aからbへ向かうベクトル
-Vec3 ToVec(Vec3 a, Vec3 b)
-{
-	float x = (b.x - a.x);
-	float y = (b.y - a.y);
-	float z = (b.z - a.z);
-	return VGet(x, y, z);
-}
-
-Vec3 norm(Vec3 a)
-{
-	float num = (a.x * a.x) + (a.y * a.y) + (a.z * a.z);
-	return VGet(a.x / num, a.y / num, a.z / num);
-}
-
-float lerp(float start, float end, float t)
-{
-	return (1 - t) * start + t * end;
-}
